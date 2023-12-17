@@ -1,8 +1,7 @@
 from math import max
-from Interfaces import Queue
 
 
-struct ArrayQueue[T: DType](Stringable, Sized, Queue):
+struct ArrayQueue[T: DType](Stringable, Sized):
     var n: Int
     var j: Int
     var len: Int
@@ -28,7 +27,7 @@ struct ArrayQueue[T: DType](Stringable, Sized, Queue):
         self.a.free()
 
     fn __len__(borrowed self) -> Int:
-        return self.len
+        return self.n
 
     fn __copyinit__(inout self, other: Self) -> None:
         self.n = other.n

@@ -1,8 +1,7 @@
 from math import max
-from Interfaces import Stack
 
 
-struct ArrayStack[T: DType](Stringable, Sized, Stack):
+struct ArrayStack[T: DType](Stringable, Sized):
     var n: Int
     var len: Int
     var a: DTypePointer[T]
@@ -26,7 +25,7 @@ struct ArrayStack[T: DType](Stringable, Sized, Stack):
         self.a.free()
 
     fn __len__(borrowed self) -> Int:
-        return self.len
+        return self.n
 
     fn __copyinit__(inout self, other: Self) -> None:
         self.n = other.n
@@ -89,4 +88,5 @@ struct ArrayStack[T: DType](Stringable, Sized, Stack):
         self.add(self.n, x)
 
     fn pop(inout self) raises -> SIMD[T, 1]:
-        return self.remove(self.n - 1)
+        return self.remove(self.n - 1) 
+    
