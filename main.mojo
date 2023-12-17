@@ -1,5 +1,5 @@
 from ArrayList import ArrayList
-from BinaryHeap import BinaryHeap
+from ArrayStack import ArrayStack
 
 let builtInStructs = [
     Bool,
@@ -49,8 +49,9 @@ let builtInTraits = [
 
 let customStructsComplete = [
     ArrayList,
+    ArrayStack,
 ]
 
 let customStructsIncomplete = [
-    BinaryHeap,
+    # BinaryHeap,
 ]
