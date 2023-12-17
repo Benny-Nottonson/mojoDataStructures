@@ -1,10 +1,6 @@
-trait Iterator:
+trait Iterable:
     fn __next__(inout self):
         ...
     
     fn __iter__(inout self):
-        ...
-
-trait Sized:
-    fn __len__(inout self):
         ...
