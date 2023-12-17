@@ -7,15 +7,47 @@ struct ArrayStack[T: DType](Stringable, Sized, Stack):
     var len: Int
     var a: DTypePointer[T]
 
-    fn __init__(inout self):
-        self.n = 0
-        self.len = 1
-        self.a = DTypePointer[T].alloc(1)
-
-    fn __init__(inout self, n: Int):
+    fn __init__(inout self, n: Int = 0):
         self.n = n
         self.len = n
         self.a = DTypePointer[T].alloc(n)
+
+    fn __getitem__(borrowed self, i: Int) raises -> SIMD[T, 1]:
+        if i < 0 or i >= self.n:
+            raise Error("index out of bounds")
+        return self.a.load(i)
+
+    fn __setitem__(inout self, i: Int, x: SIMD[T, 1]) raises:
+        if i < 0 or i >= self.n:
+            raise Error("index out of bounds")
+        self.a.store(i, x)
+
+    fn __del__(owned self):
+        self.a.free()
+
+    fn __len__(borrowed self) -> Int:
+        return self.len
+
+    fn __copyinit__(inout self, other: Self) -> None:
+        self.n = other.n
+        self.len = other.len
+        self.a = DTypePointer[T].alloc(self.len)
+        memcpy(self.a, other.a, self.len)
+
+    fn __moveinit__(inout self, owned other: Self) -> None:
+        self.n = other.n
+        self.len = other.len
+        self.a = other.a
+        memcpy[T](self.a, other.a, self.len)
+
+    fn __str__(self) -> String:
+        var s = String("[")
+        for i in range(self.n):
+            s += str(self.a.load(i))
+            if i < self.n - 1:
+                s += ", "
+        s += "]"
+        return s
 
     fn resize(inout self):
         let len = max(1, self.n * 2)
@@ -27,14 +59,10 @@ struct ArrayStack[T: DType](Stringable, Sized, Stack):
         self.a = b
 
     fn get(inout self, i: Int) raises -> SIMD[T, 1]:
-        if i < 0 or i >= self.n:
-            raise Error("index out of bounds")
-        return self.a.load(i)
+        return self[i]
 
     fn set(inout self, i: Int, x: SIMD[T, 1]) raises:
-        if i < 0 or i >= self.n:
-            raise Error("index out of bounds")
-        self.a.store(i, x)
+        self[i] = x
 
     fn add(inout self, i: Int, x: SIMD[T, 1]) raises:
         if i < 0 or i > self.n:
@@ -62,24 +90,3 @@ struct ArrayStack[T: DType](Stringable, Sized, Stack):
 
     fn pop(inout self) raises -> SIMD[T, 1]:
         return self.remove(self.n - 1)
-
-    fn size(self) -> Int:
-        return self.n
-
-    fn __len__(self) -> Int:
-        return self.n
-
-    fn __getitem__(inout self, i: Int) raises -> SIMD[T, 1]:
-        return self.get(i)
-
-    fn __setitem__(inout self, i: Int, x: SIMD[T, 1]) raises:
-        self.set(i, x)
-
-    fn __str__(self) -> String:
-        var s = String("[")
-        for i in range(self.n):
-            s += str(self.a.load(i))
-            if i < self.n - 1:
-                s += ", "
-        s += "]"
-        return s
