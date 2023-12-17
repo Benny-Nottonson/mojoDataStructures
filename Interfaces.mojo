@@ -13,3 +13,6 @@ trait Queue:
 
 trait List:
     ...
+
+trait Node:
+    ...
