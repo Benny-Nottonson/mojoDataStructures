@@ -1,8 +1,8 @@
 from math import max
-from sys.intrinsics import PrefetchOptions
+from Interfaces import Queue
 
 
-struct ArrayQueue[T: DType](Stringable, Sized):
+struct ArrayQueue[T: DType](Stringable, Sized, Queue):
     var n: Int
     var j: Int
     var len: Int

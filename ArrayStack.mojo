@@ -1,7 +1,8 @@
 from math import max
+from Interfaces import Stack
 
 
-struct ArrayStack[T: DType](Stringable, Sized):
+struct ArrayStack[T: DType](Stringable, Sized, Stack):
     var n: Int
     var len: Int
     var a: DTypePointer[T]

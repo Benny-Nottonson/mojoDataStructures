@@ -1,8 +1,8 @@
 from math import max
-from sys.intrinsics import PrefetchOptions
+from Interfaces import List
 
 
-struct ArrayList[T: DType](Stringable, Sized):
+struct ArrayList[T: DType](Stringable, Sized, List):
     var n: Int
     var j: Int
     var len: Int
