@@ -2,7 +2,7 @@ from math import max
 from sys.intrinsics import PrefetchOptions
 
 
-struct ArrayList[T: DType](Stringable, Sized):
+struct ArrayQueue[T: DType](Stringable, Sized):
     var n: Int
     var j: Int
     var len: Int
@@ -31,7 +31,7 @@ struct ArrayList[T: DType](Stringable, Sized):
         self.a.free()
         self.a = b
 
-    fn get(inout self, i: Int) raises -> SIMD[T, 1]:
+    fn get(self, i: Int) raises -> SIMD[T, 1]:
         if i < 0 or i >= self.n:
             raise Error("index out of bounds")
         return self.a.load((self.j + i) % self.len)
@@ -41,47 +41,24 @@ struct ArrayList[T: DType](Stringable, Sized):
             raise Error("index out of bounds")
         self.a.store((self.j + i) % self.len, x)
 
-    fn add(inout self, i: Int, x: SIMD[T, 1]) raises:
-        if i < 0 or i > self.n:
-            raise Error("index out of bounds")
+    fn add(inout self, x: SIMD[T, 1]):
         if self.n + 1 > self.len:
             self.resize()
-        if i < self.n // 2:
-            self.j = (self.j - 1) % self.len
-            for k in range(i):
-                self.a.store(
-                    (self.j + k) % self.len, self.a.load((self.j + k + 1) % self.len)
-                )
-        else:
-            for k in range(self.n, i, -1):
-                self.a.store(
-                    (self.j + k) % self.len, self.a.load((self.j + k - 1) % self.len)
-                )
-        self.a.store((self.j + i) % self.len, x)
+        self.a.store((self.j + self.n) % self.len, x)
         self.n += 1
 
-    fn remove(inout self, i: Int) raises -> SIMD[T, 1]:
-        if i < 0 or i >= self.n:
-            raise Error("index out of bounds")
-        let x = self.a.load((self.j + i) % self.len)
-        if i < self.n // 2:
-            for k in range(i, 0, -1):
-                self.a.store(
-                    (self.j + k) % self.len, self.a.load((self.j + k - 1) % self.len)
-                )
-            self.j = (self.j + 1) % self.len
-        else:
-            for k in range(i, self.n - 1):
-                self.a.store(
-                    (self.j + k) % self.len, self.a.load((self.j + k + 1) % self.len)
-                )
+    fn remove(inout self) raises -> SIMD[T, 1]:
+        if self.n == 0:
+            raise Error("queue is empty")
+        let x = self.a.load(self.j)
+        self.j = (self.j + 1) % self.len
         self.n -= 1
         if self.len >= 3 * self.n:
             self.resize()
         return x
 
-    fn append(inout self, x: SIMD[T, 1]) raises:
-        self.add(self.n, x)
+    fn size(self) -> Int:
+        return self.n
 
     fn __len__(self) -> Int:
         return self.n

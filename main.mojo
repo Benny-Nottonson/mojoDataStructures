@@ -1,5 +1,6 @@
 from ArrayList import ArrayList
 from ArrayStack import ArrayStack
+from ArrayQueue import ArrayQueue
 
 let builtInStructs = [
     Bool,
@@ -50,8 +51,13 @@ let builtInTraits = [
 let customStructsComplete = [
     ArrayList,
     ArrayStack,
+    ArrayQueue,
 ]
 
 let customStructsIncomplete = [
     # BinaryHeap,
 ]
+
+fn main():
+    let a = ArrayQueue[DType.int16]()
+    

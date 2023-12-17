@@ -1,5 +1,6 @@
 from math import max
 
+
 struct ArrayStack[T: DType](Stringable, Sized):
     var n: Int
     var len: Int
@@ -23,7 +24,7 @@ struct ArrayStack[T: DType](Stringable, Sized):
         self.len = len
         self.a.free()
         self.a = b
-    
+
     fn get(inout self, i: Int) raises -> SIMD[T, 1]:
         if i < 0 or i >= self.n:
             raise Error("index out of bounds")
