@@ -1,5 +1,5 @@
 from math import max
-
+from Shared import IndexError
 
 @value
 struct ArrayStack[T: DType](Stringable, Sized):
@@ -13,12 +13,12 @@ struct ArrayStack[T: DType](Stringable, Sized):
 
     fn __getitem__(borrowed self, i: Int) raises -> SIMD[T, 1]:
         if i < 0 or i >= self.n:
-            raise Error("index out of bounds")
+            raise IndexError
         return self.a.load(i)
 
     fn __setitem__(inout self, i: Int, x: SIMD[T, 1]) raises:
         if i < 0 or i >= self.n:
-            raise Error("index out of bounds")
+            raise IndexError
         self.a.store(i, x)
 
     fn __del__(owned self):
@@ -53,7 +53,7 @@ struct ArrayStack[T: DType](Stringable, Sized):
 
     fn add(inout self, i: Int, x: SIMD[T, 1]) raises:
         if i < 0 or i > self.n:
-            raise Error("index out of bounds")
+            raise IndexError
         if self.n + 1 > self.len:
             self.resize()
         for j in range(self.n + 1, i + 1, -1):
@@ -63,7 +63,7 @@ struct ArrayStack[T: DType](Stringable, Sized):
 
     fn remove(inout self, i: Int) raises -> SIMD[T, 1]:
         if i < 0 or i >= self.n:
-            raise Error("index out of bounds")
+            raise IndexError
         let x = self.a.load(i)
         for j in range(i, self.n - 1):
             self.a.store(j, self.a.load(j + 1))

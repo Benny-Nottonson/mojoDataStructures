@@ -1,4 +1,5 @@
 from math import max
+from Shared import IndexError
 
 
 @value
@@ -15,12 +16,12 @@ struct ArrayList[T: DType](Stringable, Sized):
 
     fn __getitem__(borrowed self, i: Int) raises -> SIMD[T, 1]:
         if i < 0 or i >= self.n:
-            raise Error("index out of bounds")
+            raise IndexError
         return self.a.load((self.j + i) % self.len)
 
     fn __setitem__(borrowed self, i: Int, x: SIMD[T, 1]) raises:
         if i < 0 or i >= self.n:
-            raise Error("index out of bounds")
+            raise IndexError
         self.a.store((self.j + i) % self.len, x)
 
     fn __del__(owned self):
@@ -56,7 +57,7 @@ struct ArrayList[T: DType](Stringable, Sized):
 
     fn add(inout self, i: Int, x: SIMD[T, 1]) raises:
         if i < 0 or i > self.n:
-            raise Error("index out of bounds")
+            raise IndexError
         if self.n + 1 > self.len:
             self.resize()
         if i < self.n // 2:
@@ -75,7 +76,7 @@ struct ArrayList[T: DType](Stringable, Sized):
 
     fn remove(inout self, i: Int) raises -> SIMD[T, 1]:
         if i < 0 or i >= self.n:
-            raise Error("index out of bounds")
+            raise IndexError
         let x = self.a.load((self.j + i) % self.len)
         if i < self.n // 2:
             for k in range(i, 0, -1):

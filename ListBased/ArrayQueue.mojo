@@ -1,4 +1,5 @@
 from math import max
+from Shared import IndexError
 
 
 @value
@@ -15,12 +16,12 @@ struct ArrayQueue[T: DType](Stringable, Sized):
 
     fn __getitem__(borrowed self, i: Int) raises -> SIMD[T, 1]:
         if i < 0 or i >= self.n:
-            raise Error("index out of bounds")
+            raise IndexError
         return self.a.load((self.j + i) % self.len)
 
     fn __setitem__(borrowed self, i: Int, x: SIMD[T, 1]) raises:
         if i < 0 or i >= self.n:
-            raise Error("index out of bounds")
+            raise IndexError
         self.a.store((self.j + i) % self.len, x)
 
     fn __del__(owned self):
@@ -62,7 +63,7 @@ struct ArrayQueue[T: DType](Stringable, Sized):
 
     fn remove(inout self) raises -> SIMD[T, 1]:
         if self.n == 0:
-            raise Error("queue is empty")
+            raise IndexError
         let x = self.a.load(self.j)
         self.j = (self.j + 1) % self.len
         self.n -= 1
