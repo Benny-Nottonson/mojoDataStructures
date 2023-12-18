@@ -1,6 +1,4 @@
-from ArrayList import ArrayList
-from ArrayStack import ArrayStack
-from ArrayQueue import ArrayQueue
+from ListBased import ArrayList, ArrayStack, ArrayQueue
 
 let builtInStructs = [
     Bool,
