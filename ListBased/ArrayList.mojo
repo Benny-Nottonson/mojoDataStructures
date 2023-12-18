@@ -1,0 +1,75 @@
+from math import max
+from Shared import IndexError
+
+@value
+struct ArrayList[T: CollectionElement](Stringable, Sized, Movable, Copyable):
+    var n: Int
+    var j: Int
+    var a: DynamicVector[T]
+
+    fn __getitem__(borrowed self, i: Int) raises -> T:
+        if i < 0 or i >= self.n:
+            raise IndexError
+        return self.a[(self.j + i) % self.a.capacity]
+
+    fn __setitem__(inout self, i: Int, x: T) raises:
+        if i < 0 or i >= self.n:
+            raise IndexError
+        self.a[(self.j + i) % self.a.capacity] = x
+
+    fn __len__(borrowed self) -> Int:
+        return self.n
+
+    fn __str__(borrowed self) -> String:
+        var s = String("[")
+        for i in range(self.n):
+            if i > 0:
+                s += ", "
+            let a = self.a[i]
+            
+        s += "]"
+        return s
+
+    fn resize(inout self):
+        var b = DynamicVector[T]
+        b.reserve(max(1, self.n * 2))
+        for i in range(self.n):
+            b.append(self.a[(self.j + i) % self.a.capacity])
+        self.j = 0
+        self.a = b
+
+    fn add(inout self, i: Int, x: T) raises:
+        if i < 0 or i > self.n:
+            raise IndexError
+        if self.n + 1 > self.a.capacity:
+            self.resize()
+        if i < self.n // 2:
+            self.j = (self.j - 1) % self.a.capacity
+            for k in range(i):
+                self.a[(self.j + k) % self.a.capacity] = self.a[(self.j + k + 1) % self.a.capacity]
+        else:
+            for k in range(self.n, i, -1):
+                self.a[(self.j + k) % self.a.capacity] = self.a[(self.j + k - 1) % self.a.capacity]
+        self.n += 1
+
+    fn remove(inout self, i: Int) raises -> T:
+        if i < 0 or i >= self.n:
+            raise IndexError
+        let x = self.a[(self.j + i) % self.a.capacity]
+        if i < self.n // 2:
+            for k in range(i, 0, -1):
+                self.a[(self.j + k) % self.a.capacity] = self.a[(self.j + k - 1) % self.a.capacity]
+            self.j = (self.j + 1) % self.a.capacity
+        else:
+            for k in range(i, self.n - 1):
+                self.a[(self.j + k) % self.a.capacity] = self.a[(self.j + k + 1) % self.a.capacity]
+        self.n -= 1
+        if self.a.capacity >= 3 * self.n:
+            self.resize()
+        return x
+
+    fn append(inout self, x: T):
+        if self.n + 1 > self.a.capacity:
+            self.resize()
+        self.a[(self.j + self.n) % self.a.capacity] = x
+        self.n += 1
