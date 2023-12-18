@@ -2,7 +2,7 @@ from math import max
 from Shared import IndexError
 
 @value
-struct ArrayList[T: CollectionElement](Stringable, Sized, Movable, Copyable):
+struct ArrayList[T: CollectionElement](Sized, Movable, Copyable):
     var n: Int
     var j: Int
     var a: DynamicVector[T]
@@ -19,16 +19,6 @@ struct ArrayList[T: CollectionElement](Stringable, Sized, Movable, Copyable):
 
     fn __len__(borrowed self) -> Int:
         return self.n
-
-    fn __str__(borrowed self) -> String:
-        var s = String("[")
-        for i in range(self.n):
-            if i > 0:
-                s += ", "
-            let a = self.a[i]
-            
-        s += "]"
-        return s
 
     fn resize(inout self):
         var b = DynamicVector[T]
