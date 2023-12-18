@@ -8,9 +8,8 @@ struct ArrayList[T: DType](Stringable, Sized):
     var a: DTypePointer[T]
 
     fn __init__(inout self, n: Int = 0):
-        self.n = n
+        self.n = self.len = n
         self.j = 0
-        self.len = n
         self.a = DTypePointer[T].alloc(n)
 
     fn __getitem__(borrowed self, i: Int) raises -> SIMD[T, 1]:
