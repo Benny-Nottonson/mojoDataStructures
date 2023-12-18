@@ -1,6 +1,7 @@
 from math import max
 
 
+@value
 struct ArrayList[T: DType](Stringable, Sized):
     var n: Int
     var j: Int
@@ -27,20 +28,6 @@ struct ArrayList[T: DType](Stringable, Sized):
 
     fn __len__(borrowed self) -> Int:
         return self.n
-
-    fn __copyinit__(inout self, other: Self) -> None:
-        self.n = other.n
-        self.j = other.j
-        self.len = other.len
-        self.a = DTypePointer[T].alloc(self.len)
-        memcpy(self.a, other.a, self.len)
-
-    fn __moveinit__(inout self, owned other: Self) -> None:
-        self.n = other.n
-        self.j = other.j
-        self.len = other.len
-        self.a = other.a
-        memcpy[T](self.a, other.a, self.len)
 
     fn __str__(self) -> String:
         var s = String("[")
@@ -108,18 +95,3 @@ struct ArrayList[T: DType](Stringable, Sized):
 
     fn append(inout self, x: SIMD[T, 1]) raises:
         self.add(self.n, x)
-
-
-fn main():
-    var a = ArrayList[DType.int32]()
-    try:
-        a.append(1)
-        a.append(2)
-        a.append(3)
-        a.append(4)
-        a.append(5)
-        a.append(6)
-        print(a)
-        print(len(a))
-    except:
-        print("error")

@@ -1,6 +1,7 @@
 from math import max
 
 
+@value
 struct ArrayStack[T: DType](Stringable, Sized):
     var n: Int
     var len: Int
@@ -25,18 +26,6 @@ struct ArrayStack[T: DType](Stringable, Sized):
 
     fn __len__(borrowed self) -> Int:
         return self.n
-
-    fn __copyinit__(inout self, other: Self) -> None:
-        self.n = other.n
-        self.len = other.len
-        self.a = DTypePointer[T].alloc(self.len)
-        memcpy(self.a, other.a, self.len)
-
-    fn __moveinit__(inout self, owned other: Self) -> None:
-        self.n = other.n
-        self.len = other.len
-        self.a = other.a
-        memcpy[T](self.a, other.a, self.len)
 
     fn __str__(self) -> String:
         var s = String("[")
@@ -87,5 +76,4 @@ struct ArrayStack[T: DType](Stringable, Sized):
         self.add(self.n, x)
 
     fn pop(inout self) raises -> SIMD[T, 1]:
-        return self.remove(self.n - 1) 
-    
+        return self.remove(self.n - 1)

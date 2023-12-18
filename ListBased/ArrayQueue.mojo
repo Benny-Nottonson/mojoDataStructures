@@ -1,6 +1,7 @@
 from math import max
 
 
+@value
 struct ArrayQueue[T: DType](Stringable, Sized):
     var n: Int
     var j: Int
@@ -27,20 +28,6 @@ struct ArrayQueue[T: DType](Stringable, Sized):
 
     fn __len__(borrowed self) -> Int:
         return self.n
-
-    fn __copyinit__(inout self, other: Self) -> None:
-        self.n = other.n
-        self.j = other.j
-        self.len = other.len
-        self.a = DTypePointer[T].alloc(self.len)
-        memcpy(self.a, other.a, self.len)
-
-    fn __moveinit__(inout self, owned other: Self) -> None:
-        self.n = other.n
-        self.j = other.j
-        self.len = other.len
-        self.a = other.a
-        memcpy[T](self.a, other.a, self.len)
 
     fn __str__(self) -> String:
         var s = String("[")
