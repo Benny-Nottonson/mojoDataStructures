@@ -2,64 +2,48 @@ from math import max
 from Shared import IndexError
 
 @value
-struct ArrayStack[T: AnyRegType](Sized):
+struct ArrayStack[T: CollectionElement](Sized, Movable, Copyable):
     var n: Int
-    var len: Int
-    var a: Pointer[T]
-
-    fn __init__(inout self, n: Int = 0):
-        self.n = self.len = n
-        self.a = Pointer[T].alloc(n)
+    var a: DynamicVector[T]
 
     fn __getitem__(borrowed self, i: Int) raises -> T:
         if i < 0 or i >= self.n:
             raise IndexError
-        return self.a.load(i)
+        return self.a[i]
 
     fn __setitem__(inout self, i: Int, x: T) raises:
         if i < 0 or i >= self.n:
             raise IndexError
-        self.a.store(i, x)
-
-    fn __del__(owned self):
-        self.a.free()
+        self.a[i] = x
 
     fn __len__(borrowed self) -> Int:
         return self.n
 
     fn resize(inout self):
         let len = max(1, self.n * 2)
-        let b = Pointer[T]().alloc(len)
-        for i in range(self.n):
-            b.store(i, self.a.load(i))
-        self.len = len
-        self.a.free()
+        var b = DynamicVector[T](len)
+        b.reserve(len)
+        b.data = self.a.data
         self.a = b
-
-    fn get(inout self, i: Int) raises -> T:
-        return self[i]
-
-    fn set(inout self, i: Int, x: T) raises:
-        self[i] = x
 
     fn add(inout self, i: Int, x: T) raises:
         if i < 0 or i > self.n:
             raise IndexError
-        if self.n + 1 > self.len:
+        if self.n + 1 > self.a.capacity:
             self.resize()
         for j in range(self.n + 1, i + 1, -1):
-            self.a.store(j, self.a.load(j - 1))
-        self.a.store(i, x)
+            self.a[j] = self.a[j - 1]
+        self.a[i] = x
         self.n += 1
 
     fn remove(inout self, i: Int) raises -> T:
         if i < 0 or i >= self.n:
             raise IndexError
-        let x = self.a.load(i)
+        let x = self.a[i]
         for j in range(i, self.n - 1):
-            self.a.store(j, self.a.load(j + 1))
+            self.a[j] = self.a[j + 1]
         self.n -= 1
-        if self.len >= 3 * self.n:
+        if self.a.capacity >= 3 * self.n:
             self.resize()
         return x
 
