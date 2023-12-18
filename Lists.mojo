@@ -1,7 +1,7 @@
-from math import max
 from Shared import IndexError
+from math import max
 
-trait ListBased(Sized, Movable, Copyable):
+trait List(Sized, Movable, Copyable):
     fn __getitem__(borrowed self, i: Int) raises -> CollectionElement:
         ...
         
@@ -23,7 +23,7 @@ trait ListBased(Sized, Movable, Copyable):
 
 
 @value
-struct ArrayList[T: CollectionElement](ListBased):
+struct ArrayList[T: CollectionElement](List):
     var n: Int
     var j: Int
     var a: DynamicVector[T]
@@ -94,7 +94,7 @@ struct ArrayList[T: CollectionElement](ListBased):
 
 
 @value
-struct ArrayQueue[T: CollectionElement](ListBased):
+struct ArrayQueue[T: CollectionElement](List):
     var n: Int
     var j: Int
     var a: DynamicVector[T]
@@ -143,7 +143,7 @@ struct ArrayQueue[T: CollectionElement](ListBased):
 
 
 @value
-struct ArrayStack[T: CollectionElement](ListBased):
+struct ArrayStack[T: CollectionElement](List):
     var n: Int
     var a: DynamicVector[T]
 
