@@ -1,30 +1,13 @@
-from memory.unsafe import bitcast
-
+@value
 struct Node[T: DType]:
     var value: SIMD[T, 1]
     var nxt: Pointer[Node[T]]
 
-    fn __init__(inout self, value: SIMD[T, 1], owned nxt: Pointer[Node[T]]):
-        self.value = value
-        self.nxt = nxt
-
-    fn __getitem__(self, i: Int) -> SIMD[T, 1]:
-        return self.value
-
-    fn __setitem__(inout self, i: Int, x: SIMD[T, 1]):
-        self.value = x
-
-    fn __copyinit__(inout self, other: Node[T]):
-        self.value = other.value
-        self.nxt = other.nxt
-
-    fn __moveinit__(inout self, owned other: Node[T]):
-        self.value = other.value
-        self.nxt = other.nxt
-
-    fn __eq__(self, other: Node[T]) -> Bool:
+    fn __eq__(borrowed self, other: Node[T]) -> Bool:
         return self.value == other.value and self.nxt == other.nxt
 
+    fn __ne__(borrowed self, other: Node[T]) -> Bool:
+        return self.value != other.value or self.nxt != other.nxt
         
 struct SLLQueue[T: DType]:
     var head: Node[T]
@@ -44,3 +27,13 @@ struct SLLQueue[T: DType]:
             self.tail.nxt = Pointer[Node[T]].address_of(u)
         self.tail = u
         self.n += 1
+
+    fn remove(inout self) -> SIMD[T, 1]:
+        if self.n == 0:
+            return SIMD[T, 1](0)
+        var x = self.head.value
+        self.head = self.head.nxt
+        self.n -= 1
+        if self.n == 0:
+            self.tail = Node[T](SIMD[T, 1](0), Pointer[Node[T]].get_null())
+        return x
