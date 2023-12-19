@@ -2,44 +2,59 @@ from Shared import IndexError
 from math import max
 
 trait List(Sized, Movable, Copyable):
-    fn __getitem__(borrowed self, i: Int) raises -> CollectionElement:
+    fn __getitem__(borrowed self, i: Int) raises -> ListItem:
         ...
         
-    fn __setitem__(inout self, i: Int, x: CollectionElement) raises:
+    fn __setitem__(inout self, i: Int, x: ListItem) raises:
         ...
 
     fn __len__(borrowed self) -> Int:
         ...
 
+    fn __str__(borrowed self) -> String:
+        ...
+
     fn resize(inout self):
         ...
 
-    fn add(inout self, i: Int, x: CollectionElement) raises:
+    fn add(inout self, i: Int, x: ListItem) raises:
         ...
 
-    fn remove(inout self, i: Int) raises -> CollectionElement:
+    fn remove(inout self, i: Int) raises -> ListItem:
         ...
     
 
+trait ListItem(Stringable, CollectionElement):
+    ...
+
 
 @value
-struct ArrayList[T: CollectionElement](List):
+struct ArrayList[T: ListItem](List):
     var n: Int
     var j: Int
     var a: DynamicVector[T]
 
-    fn __getitem__(borrowed self, i: Int) raises -> CollectionElement:
+    fn __getitem__(borrowed self, i: Int) raises -> ListItem:
         if i < 0 or i >= self.n:
             raise IndexError
         return self.a[(self.j + i) % self.a.capacity]
 
-    fn __setitem__(inout self, i: Int, x: CollectionElement) raises:
+    fn __setitem__(inout self, i: Int, x: ListItem) raises:
         if i < 0 or i >= self.n:
             raise IndexError
         self.a[(self.j + i) % self.a.capacity] = x
 
     fn __len__(borrowed self) -> Int:
         return self.n
+
+    fn __str__(borrowed self) -> String:
+        var s = String("[")
+        for i in range(self.n):
+            s += str(self.a[i])
+            if i < self.n - 1:
+                s += ", "
+        s += "]"
+        return s
 
     fn resize(inout self):
         let len = max(1, self.n * 2)
@@ -48,7 +63,7 @@ struct ArrayList[T: CollectionElement](List):
         b.data = self.a.data
         self.a = b
 
-    fn add(inout self, i: Int, x: CollectionElement) raises:
+    fn add(inout self, i: Int, x: ListItem) raises:
         if i < 0 or i > self.n:
             raise IndexError
         if self.n + 1 > self.a.capacity:
@@ -66,7 +81,7 @@ struct ArrayList[T: CollectionElement](List):
                 ]
         self.n += 1
 
-    fn remove(inout self, i: Int) raises -> CollectionElement:
+    fn remove(inout self, i: Int) raises -> ListItem:
         if i < 0 or i >= self.n:
             raise IndexError
         let x = self.a[(self.j + i) % self.a.capacity]
@@ -94,23 +109,32 @@ struct ArrayList[T: CollectionElement](List):
 
 
 @value
-struct ArrayQueue[T: CollectionElement](List):
+struct ArrayQueue[T: ListItem](List):
     var n: Int
     var j: Int
     var a: DynamicVector[T]
 
-    fn __getitem__(borrowed self, i: Int) raises -> CollectionElement:
+    fn __getitem__(borrowed self, i: Int) raises -> ListItem:
         if i < 0 or i >= self.n:
             raise IndexError
         return self.a[(self.j + i) % self.a.capacity]
 
-    fn __setitem__(inout self, i: Int, x: CollectionElement) raises:
+    fn __setitem__(inout self, i: Int, x: ListItem) raises:
         if i < 0 or i >= self.n:
             raise IndexError
         self.a[(self.j + i) % self.a.capacity] = x
 
     fn __len__(borrowed self) -> Int:
         return self.n
+
+    fn __str__(borrowed self) -> String:
+        var s = String("[")
+        for i in range(self.n):
+            s += str(self.a[i])
+            if i < self.n - 1:
+                s += ", "
+        s += "]"
+        return s
 
     fn resize(inout self):
         let len = max(1, self.n * 2)
@@ -119,13 +143,13 @@ struct ArrayQueue[T: CollectionElement](List):
         b.data = self.a.data
         self.a = b
 
-    fn add(inout self, i: Int, x: CollectionElement) raises:
+    fn add(inout self, i: Int, x: ListItem) raises:
         if self.n + 1 > self.a.capacity:
             self.resize()
         self.a[(self.j + self.n) % self.a.capacity] = x
         self.n += 1
 
-    fn remove(inout self, i: Int) raises -> CollectionElement:
+    fn remove(inout self, i: Int) raises -> ListItem:
         if self.n == 0:
             raise IndexError
         let x = self.a[self.j]
@@ -143,22 +167,31 @@ struct ArrayQueue[T: CollectionElement](List):
 
 
 @value
-struct ArrayStack[T: CollectionElement](List):
+struct ArrayStack[T: ListItem](List):
     var n: Int
     var a: DynamicVector[T]
 
-    fn __getitem__(borrowed self, i: Int) raises -> CollectionElement:
+    fn __getitem__(borrowed self, i: Int) raises -> ListItem:
         if i < 0 or i >= self.n:
             raise IndexError
         return self.a[i]
 
-    fn __setitem__(inout self, i: Int, x: CollectionElement) raises:
+    fn __setitem__(inout self, i: Int, x: ListItem) raises:
         if i < 0 or i >= self.n:
             raise IndexError
         self.a[i] = x
 
     fn __len__(borrowed self) -> Int:
         return self.n
+
+    fn __str__(borrowed self) -> String:
+        var s = String("[")
+        for i in range(self.n):
+            s += str(self.a[i])
+            if i < self.n - 1:
+                s += ", "
+        s += "]"
+        return s
 
     fn resize(inout self):
         let len = max(1, self.n * 2)
@@ -167,7 +200,7 @@ struct ArrayStack[T: CollectionElement](List):
         b.data = self.a.data
         self.a = b
 
-    fn add(inout self, i: Int, x: CollectionElement) raises:
+    fn add(inout self, i: Int, x: ListItem) raises:
         if i < 0 or i > self.n:
             raise IndexError
         if self.n + 1 > self.a.capacity:
@@ -177,7 +210,7 @@ struct ArrayStack[T: CollectionElement](List):
         self.a[i] = x
         self.n += 1
 
-    fn remove(inout self, i: Int) raises -> CollectionElement:
+    fn remove(inout self, i: Int) raises -> ListItem:
         if i < 0 or i >= self.n:
             raise IndexError
         let x = self.a[i]
