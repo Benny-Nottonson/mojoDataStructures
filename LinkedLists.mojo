@@ -1,6 +1,8 @@
 from Shared import IndexError
 from memory.unsafe import bitcast
 
+
+# Will not work until recursive types are supported, or non registery pointers work
 """
 Can be implemented once traits support Parametric Types
 trait LinkedList[T: CollectionElement](Sized, Movable, Copyable):
