@@ -1,24 +1,17 @@
 from Shared import IndexError
+from memory.unsafe import bitcast
 
 """
 Can be implemented once traits support Parametric Types
 trait LinkedList[T: CollectionElement](Sized, Movable, Copyable):
 
 """
+
 @value
-struct Node[T: CollectionElement](Movable, Copyable):
+struct Node[T: CollectionElement](CollectionElement):
     var value: T
     var next: Pointer[Self]
-    
-    fn __copyinit__(inout self, other: Node[T]):
-        self.value = other.value
-        self.next = other.next
 
-    fn __moveinit__(inout self, owned other: Node[T]):
-        self.value = other.value
-        self.next = other.next
-    
-    
 
 @value
 struct SLList[T: CollectionElement]:
@@ -31,14 +24,14 @@ struct SLLStack[T: CollectionElement]:
     var size: Int
 
     fn push(inout self, value: T):
-        var node = Node[T](value, Pointer[Node[T]](Node[T]))
+        var u = Node(value, Pointer[Node[T]].get_null())
         if self.size == 0:
-            self.head = node
-            self.tail = node
+            self.head = u
+            self.tail = u
         else:
-            self.tail.next = node
-            self.tail = node
-        self.size += 1
+            u.next = Pointer[Node[T]].address_of(self.head)
+            self.head = u
+
 
 @value
 struct SLLQueue[T: CollectionElement]:
