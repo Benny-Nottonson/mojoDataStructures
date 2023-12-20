@@ -1,4 +1,4 @@
-from Shared import IndexError
+from Shared import IndexError, IdealCollectionElement
 from math import max
 
 """
@@ -33,7 +33,7 @@ trait Array[T: CollectionElement](Sized, Movable, Copyable):
 """
 
 @value
-struct List[T: CollectionElement]:
+struct List[T: IdealCollectionElement]:
     var n: Int
     var j: Int
     var a: DynamicVector[T]
@@ -104,7 +104,7 @@ struct List[T: CollectionElement]:
 
 
 @value
-struct Queue[T: CollectionElement]:
+struct Queue[T: IdealCollectionElement]:
     var n: Int
     var j: Int
     var a: DynamicVector[T]
@@ -153,7 +153,7 @@ struct Queue[T: CollectionElement]:
 
 
 @value
-struct Stack[T: CollectionElement]:
+struct Stack[T: IdealCollectionElement]:
     var n: Int
     var a: DynamicVector[T]
 

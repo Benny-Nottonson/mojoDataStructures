@@ -1,15 +1,11 @@
-from Shared import IndexError
+from Shared import IndexError, IdealCollectionElement
 from math import log2, floor
 
 # Will not work until CollectionElement has implemented comparison operators
 # https://github.com/modularml/mojo/issues/1526
 
 @value
-struct BinaryHeap[T: CollectionElement]:
-    ...
-
-    
-    """
+struct BinaryHeap[T: IdealCollectionElement]:
     var n: Int
     var a: DynamicVector[T]
 
@@ -143,4 +139,3 @@ struct BinaryHeap[T: CollectionElement]:
         for i in range(self.n):
             b[i] = self.a[i]
         self.a = b
-    """
