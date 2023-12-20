@@ -3,7 +3,7 @@ from math import max
 
 """
 Can be implemented once traits support Parametric Types
-trait List[T: CollectionElement](Sized, Movable, Copyable):
+trait Array[T: CollectionElement](Sized, Movable, Copyable):
     fn __getitem__(borrowed self, i: Int) raises -> T:
         ...
         
@@ -33,7 +33,7 @@ trait List[T: CollectionElement](Sized, Movable, Copyable):
 """
 
 @value
-struct ArrayList[T: CollectionElement]:
+struct List[T: CollectionElement]:
     var n: Int
     var j: Int
     var a: DynamicVector[T]
@@ -104,7 +104,7 @@ struct ArrayList[T: CollectionElement]:
 
 
 @value
-struct ArrayQueue[T: CollectionElement]:
+struct Queue[T: CollectionElement]:
     var n: Int
     var j: Int
     var a: DynamicVector[T]
@@ -153,7 +153,7 @@ struct ArrayQueue[T: CollectionElement]:
 
 
 @value
-struct ArrayStack[T: CollectionElement]:
+struct Stack[T: CollectionElement]:
     var n: Int
     var a: DynamicVector[T]
 
