@@ -22,6 +22,8 @@
 - `Queue`
 ### Graphs
 - `Graph`
+### Set
+- `Set`
 
 ## Roadblocks
 - Parametric Traits (Needed for `List`, `Stack`, `Queue`, etc)

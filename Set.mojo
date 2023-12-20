@@ -1,0 +1,3 @@
+@value
+struct Set[T: CollectionElement]:
+    ...
