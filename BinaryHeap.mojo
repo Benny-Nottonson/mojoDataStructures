@@ -1,8 +1,6 @@
 from Shared import IndexError, IdealCollectionElement
 from math import log2, floor
 
-# Will not work until CollectionElement has implemented comparison operators
-# https://github.com/modularml/mojo/issues/1526
 
 @value
 struct BinaryHeap[T: IdealCollectionElement]:
@@ -118,8 +116,10 @@ struct BinaryHeap[T: IdealCollectionElement]:
 
     fn sift_up(inout self, i: Int):
         let p = self.parent(i)
-        if i > 0 and self.a[i] > self.a[p]:
-            self.a[i], self.a[p] = self.a[p], self.a[i]
+        if i > 0 and self.a[i].__gt__(self.a[p]):
+            let temp = self.a[i]
+            self.a[i] = self.a[p]
+            self.a[p] = temp
             self.sift_up(p)
 
     fn sift_down(inout self, i: Int):
@@ -131,11 +131,13 @@ struct BinaryHeap[T: IdealCollectionElement]:
         if r < self.n and self.a[r] > self.a[m]:
             m = r
         if m != i:
-            self.a[i], self.a[m] = self.a[m], self.a[i]
+            let temp = self.a[i]
+            self.a[i] = self.a[m]
+            self.a[m] = temp
             self.sift_down(m)
 
     fn resize(inout self):
-        let b = DynamicVector[T](self.n * 2)
+        var b = DynamicVector[T](self.n * 2)
         for i in range(self.n):
             b[i] = self.a[i]
         self.a = b
