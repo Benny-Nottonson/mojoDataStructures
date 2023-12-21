@@ -5,6 +5,8 @@
 - `List` (Dynamic Array)
 - `Stack` (LIFO)
 - `Queue` (FIFO)
+### Heap
+- `BinaryHeap` (Max Heap)
 
 ## TODO
 ### Trees
