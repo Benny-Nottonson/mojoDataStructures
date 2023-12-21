@@ -3,7 +3,7 @@ from math import log2, floor
 
 
 @value
-struct BinaryHeap[T: IdealCollectionElement]:
+struct BinaryHeap[T: IdealCollectionElement](Sized, Movable, Copyable, CollectionElement):
     var n: Int
     var a: DynamicVector[T]
 

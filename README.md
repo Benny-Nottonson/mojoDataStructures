@@ -28,5 +28,5 @@
 - `Set`
 
 ## Roadblocks
-- Parametric Traits (Needed for `List`, `Stack`, `Queue`, etc)
+- Parametric Traits (Helpful for `List`, `Stack`, `Queue` documentation)
 - Linked Nodes (Needed for Tree, Graph, LinkedList, etc)

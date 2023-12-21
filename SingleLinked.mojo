@@ -1,6 +1,4 @@
 from Shared import IndexError
-from memory.unsafe import bitcast
-
 
 # Will not work until recursive types are supported, or non registery pointers work
 """
@@ -10,7 +8,7 @@ trait SingleLinked[T: CollectionElement](Sized, Movable, Copyable):
 """
 
 @value
-struct Node[T: CollectionElement](CollectionElement):
+struct Node[T: CollectionElement]:
     ...
 
 @value
@@ -20,7 +18,6 @@ struct List[T: CollectionElement]:
 @value
 struct Stack[T: CollectionElement]:
     ...
-
 
 @value
 struct Queue[T: CollectionElement]:
