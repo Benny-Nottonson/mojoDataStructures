@@ -10,7 +10,7 @@ trait SingleLinked[T: CollectionElement](Sized, Movable, Copyable):
 """
 
 @value
-struct Node[T: CollectionElement](CollectionElement):
+struct Node[T: CollectionElement]:
     ...
 
 @value
