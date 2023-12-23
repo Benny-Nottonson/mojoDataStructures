@@ -2,7 +2,6 @@ from Shared import IndexError, IdealCollectionElement
 from math import max
 
 """
-Can be implemented once traits support Parametric Types
 trait Array[T: CollectionElement](Sized, Movable, Copyable, CollectionElement):
     fn __getitem__(borrowed self, i: Int) raises -> T:
         ...
@@ -32,11 +31,26 @@ trait Array[T: CollectionElement](Sized, Movable, Copyable, CollectionElement):
         ...
 """
 
-@value
-struct List[T: IdealCollectionElement](Sized, Movable, Copyable, CollectionElement):
+
+struct List[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionElement):
     var n: Int
     var j: Int
     var a: DynamicVector[T]
+
+    fn __init__(inout self, n: Int = 0):
+        self.n = n
+        self.j = 0
+        self.a = DynamicVector[T](n)
+
+    fn __moveinit__(inout self, owned other: List[T]):
+        self.n = other.n
+        self.j = other.j
+        self.a = other.a
+
+    fn __copyinit__(inout self, other: List[T]):
+        self.n = other.n
+        self.j = other.j
+        self.a = other.a
 
     fn __getitem__(borrowed self, i: Int) raises -> T:
         if i < 0 or i >= self.n:
@@ -103,11 +117,25 @@ struct List[T: IdealCollectionElement](Sized, Movable, Copyable, CollectionEleme
         self.n += 1
 
 
-@value
-struct Queue[T: IdealCollectionElement](Sized, Movable, Copyable, CollectionElement):
+struct Queue[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionElement):
     var n: Int
     var j: Int
     var a: DynamicVector[T]
+
+    fn __init__(inout self, n: Int = 0):
+        self.n = n
+        self.j = 0
+        self.a = DynamicVector[T](n)
+
+    fn __moveinit__(inout self, owned other: Queue[T]):
+        self.n = other.n
+        self.j = other.j
+        self.a = other.a
+
+    fn __copyinit__(inout self, other: Queue[T]):
+        self.n = other.n
+        self.j = other.j
+        self.a = other.a
 
     fn __getitem__(borrowed self, i: Int) raises -> T:
         if i < 0 or i >= self.n:
@@ -152,10 +180,21 @@ struct Queue[T: IdealCollectionElement](Sized, Movable, Copyable, CollectionElem
         self.n += 1
 
 
-@value
-struct Stack[T: IdealCollectionElement](Sized, Movable, Copyable, CollectionElement):
+struct Stack[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionElement):
     var n: Int
     var a: DynamicVector[T]
+
+    fn __init__(inout self, n: Int = 0):
+        self.n = n
+        self.a = DynamicVector[T](n)
+
+    fn __moveinit__(inout self, owned other: Stack[T]):
+        self.n = other.n
+        self.a = other.a
+
+    fn __copyinit__(inout self, other: Stack[T]):
+        self.n = other.n
+        self.a = other.a
 
     fn __getitem__(borrowed self, i: Int) raises -> T:
         if i < 0 or i >= self.n:
