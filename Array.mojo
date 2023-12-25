@@ -1,8 +1,9 @@
-from Shared import IndexError, IdealCollectionElement
+from Shared import IndexError
+from collections.vector import InlinedFixedVector
 from math import max
 
 """
-trait Array[T: CollectionElement](Sized, Movable, Copyable, CollectionElement):
+trait Array[T: AnyRegType](Sized, Movable, Copyable, AnyRegType):
     fn __getitem__(borrowed self, i: Int) raises -> T:
         ...
         
@@ -32,15 +33,15 @@ trait Array[T: CollectionElement](Sized, Movable, Copyable, CollectionElement):
 """
 
 
-struct List[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionElement):
+struct List[T: AnyRegType = Int](Sized, Movable, Copyable, CollectionElement):
     var n: Int
     var j: Int
-    var a: DynamicVector[T]
+    var a: InlinedFixedVector[T]
 
     fn __init__(inout self, n: Int = 0):
         self.n = n
         self.j = 0
-        self.a = DynamicVector[T](n)
+        self.a = InlinedFixedVector[T](n)
 
     fn __moveinit__(inout self, owned other: List[T]):
         self.n = other.n
@@ -66,10 +67,10 @@ struct List[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionElem
         return self.n
 
     fn resize(inout self):
-        let len = max(1, self.n * 2)
-        var b = DynamicVector[T](len)
-        b.reserve(len)
-        b.data = self.a.data
+        let length = max(1, self.n * 2)
+        var b = InlinedFixedVector[T](length)
+        for k in range(self.n):
+            b[k] = self.a[(self.j + k) % self.a.capacity]
         self.a = b
 
     fn add(inout self, i: Int, x: T) raises:
@@ -117,15 +118,15 @@ struct List[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionElem
         self.n += 1
 
 
-struct Queue[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionElement):
+struct Queue[T: AnyRegType = Int](Sized, Movable, Copyable, CollectionElement):
     var n: Int
     var j: Int
-    var a: DynamicVector[T]
+    var a: InlinedFixedVector[T]
 
     fn __init__(inout self, n: Int = 0):
         self.n = n
         self.j = 0
-        self.a = DynamicVector[T](n)
+        self.a = InlinedFixedVector[T](n)
 
     fn __moveinit__(inout self, owned other: Queue[T]):
         self.n = other.n
@@ -151,10 +152,10 @@ struct Queue[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionEle
         return self.n
 
     fn resize(inout self):
-        let len = max(1, self.n * 2)
-        var b = DynamicVector[T](len)
-        b.reserve(len)
-        b.data = self.a.data
+        let length = max(1, self.n * 2)
+        var b = InlinedFixedVector[T](length)
+        for k in range(self.n):
+            b[k] = self.a[(self.j + k) % self.a.capacity]
         self.a = b
 
     fn add(inout self, i: Int, x: T) raises:
@@ -180,13 +181,13 @@ struct Queue[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionEle
         self.n += 1
 
 
-struct Stack[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionElement):
+struct Stack[T: AnyRegType = Int](Sized, Movable, Copyable, CollectionElement):
     var n: Int
-    var a: DynamicVector[T]
+    var a: InlinedFixedVector[T]
 
     fn __init__(inout self, n: Int = 0):
         self.n = n
-        self.a = DynamicVector[T](n)
+        self.a = InlinedFixedVector[T](n)
 
     fn __moveinit__(inout self, owned other: Stack[T]):
         self.n = other.n
@@ -211,9 +212,9 @@ struct Stack[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionEle
 
     fn resize(inout self):
         let len = max(1, self.n * 2)
-        var b = DynamicVector[T](len)
-        b.reserve(len)
-        b.data = self.a.data
+        var b = InlinedFixedVector[T](len)
+        for k in range(self.n):
+            b[k] = self.a[k]
         self.a = b
 
     fn add(inout self, i: Int, x: T) raises:
@@ -237,8 +238,11 @@ struct Stack[T: CollectionElement = Int](Sized, Movable, Copyable, CollectionEle
             self.resize()
         return x
 
-    fn push(inout self, x: T) raises:
-        self.add(self.n, x)
+    fn push(inout self, x: T):
+        if self.n + 1 > self.a.capacity:
+            self.resize()
+        self.a[self.n] = x
+        self.n += 1
 
     fn pop(inout self) raises -> T:
         return self.remove(self.n - 1)
