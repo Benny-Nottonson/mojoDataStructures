@@ -1,5 +1,5 @@
 from Shared import IndexError
-from collections.vector import InlinedFixedVector
+from collections.vector import UnsafeFixedVector
 from math import max
 
 """
@@ -36,12 +36,12 @@ trait Array[T: AnyRegType](Sized, Movable, Copyable, AnyRegType):
 struct List[T: AnyRegType = Int](Sized, Movable, Copyable, CollectionElement):
     var n: Int
     var j: Int
-    var a: InlinedFixedVector[T]
+    var a: UnsafeFixedVector[T]
 
     fn __init__(inout self, n: Int = 0):
         self.n = n
         self.j = 0
-        self.a = InlinedFixedVector[T](n)
+        self.a = UnsafeFixedVector[T](n)
 
     fn __moveinit__(inout self, owned other: List[T]):
         self.n = other.n
@@ -68,7 +68,7 @@ struct List[T: AnyRegType = Int](Sized, Movable, Copyable, CollectionElement):
 
     fn resize(inout self):
         let length = max(1, self.n * 2)
-        var b = InlinedFixedVector[T](length)
+        let b = UnsafeFixedVector[T](length)
         for k in range(self.n):
             b[k] = self.a[(self.j + k) % self.a.capacity]
         self.a = b
@@ -121,12 +121,12 @@ struct List[T: AnyRegType = Int](Sized, Movable, Copyable, CollectionElement):
 struct Queue[T: AnyRegType = Int](Sized, Movable, Copyable, CollectionElement):
     var n: Int
     var j: Int
-    var a: InlinedFixedVector[T]
+    var a: UnsafeFixedVector[T]
 
     fn __init__(inout self, n: Int = 0):
         self.n = n
         self.j = 0
-        self.a = InlinedFixedVector[T](n)
+        self.a = UnsafeFixedVector[T](n)
 
     fn __moveinit__(inout self, owned other: Queue[T]):
         self.n = other.n
@@ -153,7 +153,7 @@ struct Queue[T: AnyRegType = Int](Sized, Movable, Copyable, CollectionElement):
 
     fn resize(inout self):
         let length = max(1, self.n * 2)
-        var b = InlinedFixedVector[T](length)
+        let b = UnsafeFixedVector[T](length)
         for k in range(self.n):
             b[k] = self.a[(self.j + k) % self.a.capacity]
         self.a = b
@@ -183,11 +183,11 @@ struct Queue[T: AnyRegType = Int](Sized, Movable, Copyable, CollectionElement):
 
 struct Stack[T: AnyRegType = Int](Sized, Movable, Copyable, CollectionElement):
     var n: Int
-    var a: InlinedFixedVector[T]
+    var a: UnsafeFixedVector[T]
 
     fn __init__(inout self, n: Int = 0):
         self.n = n
-        self.a = InlinedFixedVector[T](n)
+        self.a = UnsafeFixedVector[T](n)
 
     fn __moveinit__(inout self, owned other: Stack[T]):
         self.n = other.n
@@ -212,7 +212,7 @@ struct Stack[T: AnyRegType = Int](Sized, Movable, Copyable, CollectionElement):
 
     fn resize(inout self):
         let len = max(1, self.n * 2)
-        var b = InlinedFixedVector[T](len)
+        let b = UnsafeFixedVector[T](len)
         for k in range(self.n):
             b[k] = self.a[k]
         self.a = b
